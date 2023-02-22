@@ -1,22 +1,14 @@
-#[macro_use]
-extern crate nickel;
+use actix_web::{get, web, App, HttpServer, Responder};
 
-use nickel::Nickel;
-
-fn main() {
-    let mut server = Nickel::new();
-
-    server.utilize(router! {
-        get "**" => |_req, _res| {
-            say_hello()
-        }
-    });
-
-    server
-        .listen("127.0.0.1:6767")
-        .expect("Could not listen on port");
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    HttpServer::new(|| App::new().service(index))
+        .bind(("127.0.0.1", 8080))?
+        .run()
+        .await
 }
 
-fn say_hello() -> String {
-    String::from("Hello world!")
+#[get("/")]
+async fn index() -> impl Responder {
+    "Hello World!"
 }
