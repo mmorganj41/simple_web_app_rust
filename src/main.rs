@@ -8,11 +8,15 @@ fn main() {
 
     server.utilize(router! {
         get "**" => |_req, _res| {
-            "Hello world!"
+            say_hello()
         }
     });
 
     server
         .listen("127.0.0.1:6767")
         .expect("Could not listen on port");
+}
+
+fn say_hello() -> String {
+    String::from("Hello world!")
 }
