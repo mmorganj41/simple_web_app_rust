@@ -1,3 +1,8 @@
+// add models
+mod api;
+mod models;
+mod repository;
+
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
 #[actix_web::main]
