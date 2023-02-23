@@ -13,7 +13,7 @@ pub async fn create_user(db: Data<MongoRepo>, new_user: Json<User>) -> HttpRespo
         location: new_user.location.to_owned(),
         title: new_user.title.to_owned(),
     };
-    let user_detail = db.create_use(data).await;
+    let user_detail = db.create_user(data).await;
     match user_detail {
         Ok(user) => HttpResponse::Ok().json(user),
         Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
