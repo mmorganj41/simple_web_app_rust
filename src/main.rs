@@ -11,7 +11,7 @@ use repository::mongodb_repo::MongoRepo;
 async fn main() -> std::io::Result<()> {
     let db = MongoRepo::init().await;
     let db_data = Data::new(db);
-    HttpServer::new(|| App::new().app_data(db_data.clone()).service(create_user))
+    HttpServer::new(move || App::new().app_data(db_data.clone()).service(create_user))
         .bind(("127.0.0.1", 8080))?
         .run()
         .await
