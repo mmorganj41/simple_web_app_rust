@@ -1,6 +1,6 @@
 use crate::{models::user_model::User, repository::mongodb_repo::MongoRepo};
 use actix_web::{
-    get, post, put,
+    delete, get, post, put,
     web::{Data, Json, Path},
     HttpResponse,
 };
@@ -50,7 +50,7 @@ pub async fn update_user(
         location: new_user.location.to_owned(),
         title: new_user.title.to_owned(),
     };
-    let update_result = db.update_user(&id, new_user).await;
+    let update_result = db.update_user(&id, data).await;
     match update_result {
         Ok(update) => {
             if update.matched_count == 1 {
@@ -61,6 +61,25 @@ pub async fn update_user(
                 };
             } else {
                 return HttpResponse::NotFound().body("No user found with the specified ID");
+            }
+        }
+        Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
+    }
+}
+
+#[delete("/user/{id}")]
+pub async fn delete_user(db: Data<MongoRepo>, path: Path<String>) -> HttpResponse {
+    let id = path.into_inner();
+    if id.is_empty() {
+        return HttpResponse::BadRequest().body("Invalid ID");
+    };
+    let result = db.delete_user(&id).await;
+    match result {
+        Ok(res) => {
+            if res.deleted_count == 1 {
+                return HttpResponse::Ok().json("User succesfully deleted");
+            } else {
+                return HttpResponse::NotFound().json("User with specified ID not found.");
             }
         }
         Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
